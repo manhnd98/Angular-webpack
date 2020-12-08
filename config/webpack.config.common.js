@@ -35,7 +35,7 @@ module.exports = {
                 ident: "postcss",
                 syntax: "postcss-scss",
                 plugins: ["postcss-import", "tailwindcss", "autoprefixer", purgecss({
-                  content: ['./**/*.html']
+                  content: ['./**/*.html','./*.html', './**/*.ts', './*.ts']
                 })],
               },
             },

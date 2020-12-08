@@ -8,4 +8,6 @@ import { Component } from '@angular/core';
 
 export class AppComponent {
     name = 'Angular 7 & Webpack 4';
+
+    class = 'text-center';
 }
