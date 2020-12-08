@@ -1,55 +1,59 @@
-'use strict';
+"use strict";
 
-const CleanWebpackPlugin   = require('clean-webpack-plugin');
-const HtmlWebpackPlugin    = require('html-webpack-plugin');
-
-const helpers              = require('./helpers');
-const isDev                = process.env.NODE_ENV !== 'production';
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const purgecss = require('@fullhuman/postcss-purgecss');
+const helpers = require("./helpers");
+const isDev = process.env.NODE_ENV !== "production";
 
 module.exports = {
-    entry: {
-        vendor: './src/vendor.ts',
-        polyfills: './src/polyfills.ts',
-        main: isDev ? './src/main.ts' : './src/main.aot.ts'
-    },
+  entry: {
+    vendor: "./src/vendor.ts",
+    polyfills: "./src/polyfills.ts",
+    main: isDev ? "./src/main.ts" : "./src/main.aot.ts",
+  },
 
-    resolve: {
-        extensions: ['.ts', '.js', '.scss']
-    },
+  resolve: {
+    extensions: [".ts", ".js", ".scss"],
+  },
 
-    module: {
-        rules: [
-            {
-                test: /\.html$/,
-                loader: 'html-loader'
+  module: {
+    rules: [
+      {
+        test: /\.html$/,
+        loader: "html-loader",
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          "to-string-loader",
+          { loader: "css-loader", options: { sourceMap: isDev, importLoaders: 2} },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                ident: "postcss",
+                syntax: "postcss-scss",
+                plugins: ["postcss-import", "tailwindcss", "autoprefixer", purgecss({
+                  content: ['./**/*.html']
+                })],
+              },
             },
-            {
-                test: /\.(scss|sass)$/,
-                use: [
-                    { loader: 'style-loader', options: { sourceMap: isDev } },
-                    { loader: 'css-loader', options: { sourceMap: isDev } },
-                    { loader: 'sass-loader', options: { sourceMap: isDev } }
-                ],
-                include: helpers.root('src', 'assets')
-            },
-            {
-                test: /\.(scss|sass)$/,
-                use: [
-                    'to-string-loader',
-                    { loader: 'css-loader', options: { sourceMap: isDev } },
-                    { loader: 'sass-loader', options: { sourceMap: isDev } }
-                ],
-                include: helpers.root('src', 'app')
-            }
-        ]
-    },
+          },
+          "sass-loader"
+        ],
+      },
+    ],
+  },
 
-    plugins: [
-        new CleanWebpackPlugin(
-            helpers.root('dist'), { root: helpers.root(), verbose: true }),
+  plugins: [
+    new CleanWebpackPlugin(helpers.root("dist"), {
+      root: helpers.root(),
+      verbose: true,
+    }),
 
-        new HtmlWebpackPlugin({
-            template: 'src/index.html'
-        })
-    ]
+    new HtmlWebpackPlugin({
+      template: "src/index.html",
+    }),
+  ],
 };
